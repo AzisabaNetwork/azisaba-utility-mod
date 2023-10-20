@@ -58,8 +58,8 @@ public class WebSocketChatClient extends WebSocketClient {
             return;
         }
         if (remote) {
-            sendMessage(Component.literal("Disconnected from guild chat, reconnecting after 30 seconds"));
-            Blueberry.getUtil().getClientScheduler().runTaskLaterAsynchronously(mod, 1000 * 30, mod::reconnect);
+            sendMessage(Component.literal("Disconnected from guild chat, reconnecting after 15 seconds"));
+            Blueberry.getUtil().getClientScheduler().runTaskLaterAsynchronously(mod, 1000 * 15, mod::reconnect);
         }
     }
 
