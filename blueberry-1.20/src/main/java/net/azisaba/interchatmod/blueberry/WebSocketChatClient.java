@@ -82,9 +82,9 @@ public class WebSocketChatClient extends WebSocketClient {
         send(gson.toJson(obj));
     }
 
-    public void focusGuild(long id) {
+    public void selectGuild(long id) {
         JsonObject obj = new JsonObject();
-        obj.addProperty("type", "focus");
+        obj.addProperty("type", "select");
         obj.addProperty("guildId", id);
         send(gson.toJson(obj));
     }

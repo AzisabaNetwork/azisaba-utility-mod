@@ -40,7 +40,7 @@ public class GuildFocusCommand implements ClientCommandHandler {
             source.sendFailure(Component.literal("そんなぎるどないよ " + guildName));
             return 0;
         }
-        mod.client.focusGuild(guild.id());
+        mod.client.selectGuild(guild.id());
         source.sendSystemMessage(Component.literal(guild.name() + " にちゃっとするようにしたよ(/cg <めっせーじ>でできるよ)"));
         return 1;
     }
