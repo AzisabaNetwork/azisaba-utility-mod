@@ -45,7 +45,7 @@ public class WebSocketChatClient extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         JsonObject obj = gson.fromJson(message, JsonObject.class);
-        if (obj.has("message")) {
+        if (obj.has("message") && !Mod.isInAzisaba()) {
             sendMessage(Component.literal(obj.get("message").getAsString()));
         }
     }

@@ -148,6 +148,12 @@ public class Mod extends BlueberryMod {
         trySwitch();
     }
 
+    public static boolean isInAzisaba() {
+        ServerData serverData = Minecraft.getInstance().getCurrentServer();;
+        if (serverData == null) return false;
+        return serverData.ip.endsWith(".azisaba.net") || serverData.ip.equals("azisaba.net");
+    }
+
     public void trySwitch() {
         if (client == null) return;
         ServerData serverData = Minecraft.getInstance().getCurrentServer();
