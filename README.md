@@ -1,13 +1,35 @@
-# ExampleMod
+# InterChatMod
 
-An example mod for blueberry to help you get started creating a mod.
+[InterChat](https://github.com/AzisabaNetwork/InterChat) (ギルドチャット)をクライアントでも使えるようにするもの
 
-## Usage
+## 共通
 
-ExampleMod is a gradle based project.
+- APIキーはアジ鯖内で`/apikey`をすることで入手可能。
+- `/cgs <ギルド> [メッセージ]`でギルドを選択、もしくはギルド内に発言。
+- `/cg <メッセージ>`で事前に`/cgs`したギルドに発言。
+- 「Chat without command」でデフォルトのチャットがギルドチャットになる。先頭に「!」をつけると一時的に無効化される。
 
-- `patchVanillaJar` - Initializes the environment
-- `runClient` - Compile and run client
-- `runServer` - Compile and run server
+## Blueberry
 
-To update blueberry with same api version, simply remove the blueberry-installer-*.jar (if you don't know what this means, you will know when it's time to do so).
+### 前提Mod
+
+N/A
+
+### 手順
+
+1. Mod設定にAPIキーを入れる
+
+## Fabric
+
+### 前提Mod
+
+- [fabric-api](https://modrinth.com/mod/fabric-api)
+- [owo-lib](https://modrinth.com/mod/owo-lib)
+
+### あったほうがいいMod
+
+- [Mod Menu](https://modrinth.com/mod/modmenu)
+
+### 手順
+
+1. Mod Menuが入ってる場合は設定画面を使用可能、それ以外の場合はゲーム内で`/reconnectinterchat <apiキー>`で可能
