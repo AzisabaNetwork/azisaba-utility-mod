@@ -14,3 +14,4 @@ pluginManagement {
 }
 include("blueberry-1.20")
 include("fabric-1.20")
+include("common")

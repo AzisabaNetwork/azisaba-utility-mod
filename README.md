@@ -33,3 +33,9 @@ N/A
 ### 手順
 
 1. Mod Menuが入ってる場合は設定画面を使用可能、それ以外の場合はゲーム内で`/reconnectinterchat <apiキー>`で可能
+
+## Building
+
+For `blueberry-*` projects, please do `gradlew shadowJar`.
+
+For `fabric-*` projects, please do `gradlew build`. (don't use `-all` jars!)

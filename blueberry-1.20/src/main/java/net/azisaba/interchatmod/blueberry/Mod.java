@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.azisaba.interchatmod.blueberry.commands.GuildChatCommand;
+import net.azisaba.interchatmod.blueberry.commands.GuildCommand;
 import net.azisaba.interchatmod.blueberry.commands.GuildFocusCommand;
 import net.azisaba.interchatmod.blueberry.model.Guild;
 import net.blueberrymc.client.commands.ClientCommandManager;
@@ -42,6 +43,7 @@ public class Mod extends BlueberryMod {
         ClientCommandManager.register("cgf", new GuildFocusCommand("cgf", this));
         ClientCommandManager.register("cgs", new GuildFocusCommand("cgs", this));
         ClientCommandManager.register("cg", new GuildChatCommand(this));
+        ClientCommandManager.register("cguild", new GuildCommand(this));
     }
 
     @Override
@@ -173,7 +175,7 @@ public class Mod extends BlueberryMod {
             e.setMessage(e.getMessage().substring(1));
             return;
         }
-        client.sendMessageToGuild(null, e.getMessage());
         e.setCancelled(true);
+        client.sendMessageToGuild(null, e.getMessage());
     }
 }

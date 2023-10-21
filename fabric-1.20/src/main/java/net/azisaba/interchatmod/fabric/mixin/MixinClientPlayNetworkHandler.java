@@ -1,7 +1,10 @@
 package net.azisaba.interchatmod.fabric.mixin;
 
 import net.azisaba.interchatmod.fabric.Mod;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.text.Text;
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,7 +23,12 @@ public class MixinClientPlayNetworkHandler {
             return;
         }
         ci.cancel();
-        Mod.client.sendMessageToGuild(null, content);
+        try {
+            Mod.client.sendMessageToGuild(null, content);
+        } catch (WebsocketNotConnectedException e) {
+            assert MinecraftClient.getInstance().player != null;
+            MinecraftClient.getInstance().player.sendMessage(Text.literal("ギルドチャットに接続されていません。"));
+        }
     }
 
     @ModifyArg(method = "sendChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/message/MessageBody;<init>(Ljava/lang/String;Ljava/time/Instant;JLnet/minecraft/network/message/LastSeenMessageList;)V"))

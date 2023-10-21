@@ -42,6 +42,46 @@ public class Commands {
                 );
     }
 
+    public static LiteralArgumentBuilder<FabricClientCommandSource> builderGuild() {
+        return ClientCommandManager.literal("cguild")
+                .then(ClientCommandManager.literal("invite")
+                        .then(ClientCommandManager.argument("player", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    Mod.client.invite(StringArgumentType.getString(ctx, "player"));
+                                    return 0;
+                                })
+                        )
+                )
+                .then(ClientCommandManager.literal("accept")
+                        .then(ClientCommandManager.argument("guild", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    Mod.client.respondInvite(StringArgumentType.getString(ctx, "guild"), true);
+                                    return 0;
+                                })
+                        )
+                )
+                .then(ClientCommandManager.literal("reject")
+                        .then(ClientCommandManager.argument("guild", StringArgumentType.word())
+                                .executes(ctx -> {
+                                    Mod.client.respondInvite(StringArgumentType.getString(ctx, "guild"), false);
+                                    return 0;
+                                })
+                        )
+                )
+                .then(ClientCommandManager.literal("nick")
+                        .executes(ctx -> {
+                            Mod.client.nick(null);
+                            return 0;
+                        })
+                        .then(ClientCommandManager.argument("nickname", StringArgumentType.greedyString())
+                                .executes(ctx -> {
+                                    Mod.client.nick(StringArgumentType.getString(ctx, "nickname"));
+                                    return 0;
+                                })
+                        )
+                );
+    }
+
     private static int executeFocus(FabricClientCommandSource source, String guildName) {
         Guild guild = Mod.GUILDS.stream().filter(g -> g.name().equalsIgnoreCase(guildName)).findAny().orElse(null);
         if (guild == null) {

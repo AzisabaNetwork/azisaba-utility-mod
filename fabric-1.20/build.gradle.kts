@@ -9,6 +9,7 @@ val yarnMappings = "1.20.2+build.4"
 val loaderVersion = "0.14.23"
 val fabricVersion = "0.90.0+1.20.2"
 val archivesBaseName = "InterChatMod-${project.name}"
+val adventureVersion by project.properties
 
 repositories {
     // Add repositories to retrieve artifacts from in here.
@@ -35,7 +36,15 @@ dependencies {
     // These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
     // modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
-    implementation("org.java-websocket:Java-WebSocket:1.5.4")
+    implementation(project(":common"))
+    include(project(":common"))
+    include("net.kyori:adventure-api:$adventureVersion")
+    include("net.kyori:adventure-key:$adventureVersion")
+    include("net.kyori:examination-api:1.3.0")
+    include("net.kyori:examination-string:1.3.0")
+    include("net.kyori:adventure-text-serializer-legacy:$adventureVersion")
+    include("net.kyori:adventure-text-serializer-json:$adventureVersion")
+    include("net.kyori:adventure-text-serializer-gson:$adventureVersion")
     include("org.java-websocket:Java-WebSocket:1.5.4")
 }
 

@@ -19,21 +19,14 @@ blueberry {
     apiVersion.set("2.0.0-SNAPSHOT")
 }
 
-repositories {
-    // mavenLocal()
-    mavenCentral()
-    maven { url = uri("https://repo.azisaba.net/repository/maven-public/") }
-    maven { url = uri("https://libraries.minecraft.net/") }
-    maven { url = uri("https://repo.blueberry.net/repository/maven-public/") }
-}
-
 dependencies {
     blueberry()
-    implementation("org.java-websocket:Java-WebSocket:1.5.4")
+    implementation(project(":common"))
 }
 
 tasks {
     shadowJar {
+        relocate("net.kyori", "net.azisaba.interchatmod.lib.net.kyori")
         relocate("org.java_websocket", "net.azisaba.interchatmod.lib.org.java_websocket")
     }
 }

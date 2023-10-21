@@ -35,6 +35,7 @@ public class Mod implements ModInitializer {
             dispatcher.register(Commands.builderGS());
             dispatcher.register(Commands.builderG());
             dispatcher.register(Commands.builderReconnectInterChat());
+            dispatcher.register(Commands.builderGuild());
         });
 
         TIMER.schedule(new TimerTask() {
