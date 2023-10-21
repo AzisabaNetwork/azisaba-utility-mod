@@ -23,8 +23,8 @@ N/A
 
 ### 前提Mod
 
-- [fabric-api](https://modrinth.com/mod/fabric-api)
-- [owo-lib](https://modrinth.com/mod/owo-lib)
+- [fabric-api](https://modrinth.com/mod/fabric-api/version/0.90.0+1.20.2) (0.90.0以上)
+- [owo-lib](https://modrinth.com/mod/owo-lib/version/0.11.3+1.20.2) (0.11.3以上)
 
 ### あったほうがいいMod
 
