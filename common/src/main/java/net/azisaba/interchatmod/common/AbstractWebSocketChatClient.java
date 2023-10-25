@@ -82,6 +82,8 @@ public abstract class AbstractWebSocketChatClient extends WebSocketClient {
 
     @Override
     public void onError(Exception ex) {
+        sendMessage("WebSocket接続でエラーが発生しました: " + ex.getMessage());
+        ex.printStackTrace();
     }
 
     public void auth(String key) {

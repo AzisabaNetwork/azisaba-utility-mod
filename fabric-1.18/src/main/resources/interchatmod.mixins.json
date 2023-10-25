@@ -3,7 +3,7 @@
 	"package": "net.azisaba.interchatmod.fabric.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-        "MixinClientPlayNetworkHandler",
+      "MixinClientPlayerEntity",
 		"MixinMinecraftClient"
 	],
 	"injectors": {

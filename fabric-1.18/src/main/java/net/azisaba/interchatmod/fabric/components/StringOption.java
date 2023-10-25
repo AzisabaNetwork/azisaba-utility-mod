@@ -30,8 +30,8 @@ public class StringOption extends Option implements OrderableTooltip {
     @Override
     public ClickableWidget createButton(GameOptions options, int x, int y, int width) {
         TextFieldWidget widget = new TextFieldTooltipWidget(MinecraftClient.getInstance().textRenderer, x, y, width, 20, key, this::getOrderedTooltip);
-        widget.setText(getter.get());
         widget.setMaxLength(1024);
+        widget.setText(getter.get());
         widget.setChangedListener(s -> {
             if (s.isEmpty()) {
                 widget.setSuggestion(new TranslatableText(tooltipKey).getString());

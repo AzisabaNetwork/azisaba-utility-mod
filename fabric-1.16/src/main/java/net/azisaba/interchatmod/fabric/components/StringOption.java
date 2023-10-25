@@ -10,6 +10,7 @@ import net.minecraft.text.OrderedText;
 import net.minecraft.text.TranslatableText;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -44,7 +45,7 @@ public class StringOption extends Option implements OrderableTooltip {
     }
 
     @Override
-    public List<OrderedText> getOrderedTooltip() {
-        return MinecraftClient.getInstance().textRenderer.wrapLines(new TranslatableText(tooltipKey), 200);
+    public Optional<List<OrderedText>> getOrderedTooltip() {
+        return Optional.of(MinecraftClient.getInstance().textRenderer.wrapLines(new TranslatableText(tooltipKey), 200));
     }
 }

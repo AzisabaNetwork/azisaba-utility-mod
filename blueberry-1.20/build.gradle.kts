@@ -29,4 +29,8 @@ tasks {
         relocate("net.kyori", "net.azisaba.interchatmod.lib.net.kyori")
         relocate("org.java_websocket", "net.azisaba.interchatmod.lib.org.java_websocket")
     }
+
+    getByName("build") {
+        dependsOn("shadowJar")
+    }
 }
