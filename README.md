@@ -21,13 +21,22 @@ N/A
 
 ## Fabric
 
-### 前提Mod
+### 1.19.4以上
 
-- [fabric-api](https://modrinth.com/mod/fabric-api/version/0.90.0+1.20.2) (0.90.0以上)
-- [owo-lib](https://modrinth.com/mod/owo-lib/version/0.11.3+1.20.2) (0.11.3以上)
+#### 前提Mod
 
-### あったほうがいいMod
+- [fabric-api](https://modrinth.com/mod/fabric-api)
+- [owo-lib](https://modrinth.com/mod/owo-lib/version/0.11.3+1.20.2)
 
+#### あったほうがいいMod
+
+- [Mod Menu](https://modrinth.com/mod/modmenu)
+
+### 1.18.2以下
+
+#### 前提Mod
+
+- [fabric-api](https://modrinth.com/mod/fabric-api)
 - [Mod Menu](https://modrinth.com/mod/modmenu)
 
 ### 手順

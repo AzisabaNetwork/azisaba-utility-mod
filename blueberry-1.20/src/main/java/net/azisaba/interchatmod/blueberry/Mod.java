@@ -18,6 +18,8 @@ import net.blueberrymc.common.bml.event.EventHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.server.IntegratedServer;
+import net.minecraft.network.chat.Component;
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.SSLContext;
@@ -176,6 +178,12 @@ public class Mod extends BlueberryMod {
             return;
         }
         e.setCancelled(true);
-        client.sendMessageToGuild(null, e.getMessage());
+        try {
+            client.sendMessageToGuild(null, e.getMessage());
+        } catch (WebsocketNotConnectedException ex) {
+            assert Minecraft.getInstance().player != null;
+            Minecraft.getInstance().player.sendSystemMessage(Component.literal("ギルドチャットに接続されていません。"));
+            reconnect();
+        }
     }
 }
