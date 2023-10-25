@@ -13,9 +13,10 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
-public class MixinClientPlayNetworkHandler {
+public class MixinClientPlayerEntity {
     @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true)
     public void maybeCancel(String content, CallbackInfo ci) {
+        if (content.startsWith("/")) return;
         if (!ModConfig.chatWithoutCommand) {
             return;
         }
@@ -35,6 +36,6 @@ public class MixinClientPlayNetworkHandler {
 
     @ModifyArg(method = "sendChatMessage", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/c2s/play/ChatMessageC2SPacket;<init>(Ljava/lang/String;)V"))
     public String modifyMessageBodyArg(String string) {
-        return ModConfig.chatWithoutCommand ? string.substring(1) : string;
+        return ModConfig.chatWithoutCommand && !string.startsWith("/") ? string.substring(1) : string;
     }
 }
