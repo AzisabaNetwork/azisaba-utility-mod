@@ -11,7 +11,7 @@
 		"homepage": "https://azisaba.net/",
 		"sources": "https://github.com/AzisabaNetwork/InterChatMod"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/interchatmod/icon.png",
 	"environment": "client",
 	"entrypoints": {
