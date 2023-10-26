@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"refmap": "mixins.interchatmod.refmap.json",
+	"package": "net.azisaba.interchatmod.forge.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+        "MixinClientPlayNetHandler",
+		"MixinClientPlayerEntity",
+		"MixinMinecraft"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
