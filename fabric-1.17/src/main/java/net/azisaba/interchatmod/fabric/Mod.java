@@ -5,8 +5,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.terraformersmc.modmenu.api.ModMenuApi;
+import net.azisaba.interchatmod.common.model.Guild;
+import net.azisaba.interchatmod.common.model.GuildMember;
 import net.azisaba.interchatmod.common.util.ByteStreams;
-import net.azisaba.interchatmod.fabric.model.Guild;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.minecraft.client.MinecraftClient;
@@ -18,16 +19,19 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Mod implements ModInitializer, ModMenuApi {
     public static final Logger LOGGER = LoggerFactory.getLogger("InterChatMod");
     public static final Timer TIMER = new Timer(true);
     public static final Set<Guild> GUILDS = Collections.synchronizedSet(new HashSet<>());
+    public static final Map<Long, Set<GuildMember>> guildMembers = new ConcurrentHashMap<>();
     public static WebSocketChatClient client;
 
     @Override
@@ -43,14 +47,15 @@ public class Mod implements ModInitializer, ModMenuApi {
             @Override
             public void run() {
                 try {
-                    String url = "https://api-ktor.azisaba.net/interchat/guilds/list";
-                    HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-                    connection.addRequestProperty("Authorization", "Bearer " + ModConfig.apiKey);
-                    String response = ByteStreams.readString(connection.getInputStream(), StandardCharsets.UTF_8);
-                    JsonArray arr = new Gson().fromJson(response, JsonArray.class);
+                    Gson gson = new Gson();
+                    JsonArray arr = gson.fromJson(makeRequest("interchat/guilds/list"), JsonArray.class);
                     Set<Guild> localGuilds = getGuildsFromArray(arr);
                     GUILDS.clear();
                     GUILDS.addAll(localGuilds);
+                    for (Guild guild : localGuilds) {
+                        JsonArray membersArray = gson.fromJson(makeRequest("interchat/guilds/" + guild.id() + "/members"), JsonArray.class);
+                        guildMembers.put(guild.id(), GuildMember.getGuildMembersFromArray(membersArray));
+                    }
                 } catch (Exception e) {
                     LOGGER.warn("Failed to fetch guild list", e);
                 }
@@ -58,6 +63,13 @@ public class Mod implements ModInitializer, ModMenuApi {
         }, 1000 * 30, 1000 * 30);
 
         reconnect();
+    }
+
+    private static @NotNull String makeRequest(String path) throws IOException {
+        String url = "https://api-ktor.azisaba.net/" + path;
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.addRequestProperty("Authorization", "Bearer " + ModConfig.apiKey);
+        return ByteStreams.readString(connection.getInputStream(), StandardCharsets.UTF_8);
     }
 
     public static void reconnect() {

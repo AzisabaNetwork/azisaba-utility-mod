@@ -36,7 +36,23 @@ public class WebSocketChatClient extends AbstractWebSocketChatClient {
             public void run() {
                 Mod.reconnect();
             }
+        }, 1000 * 5);
+        Mod.TIMER.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (!Mod.client.isOpen()) {
+                    Mod.reconnect();
+                }
+            }
         }, 1000 * 15);
+        Mod.TIMER.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (!Mod.client.isOpen()) {
+                    Mod.reconnect();
+                }
+            }
+        }, 1000 * 30);
     }
 
     @Override

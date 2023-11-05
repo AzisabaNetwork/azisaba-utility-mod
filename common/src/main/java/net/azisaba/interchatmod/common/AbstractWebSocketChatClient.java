@@ -10,6 +10,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.net.URI;
@@ -19,6 +20,7 @@ public abstract class AbstractWebSocketChatClient extends WebSocketClient {
             LegacyComponentSerializer.builder().extractUrls().character('§').build();
     protected final Gson gson = new Gson();
     private long openAt;
+    private long selectedGuild = -1;
 
     public AbstractWebSocketChatClient(URI uri) {
         super(uri);
@@ -63,8 +65,14 @@ public abstract class AbstractWebSocketChatClient extends WebSocketClient {
         if (type.equals("component") && !isInAzisaba()) {
             sendMessage(GsonComponentSerializer.gson().deserialize(obj.get("message").getAsString()));
         }
+        if (type.equals("feedback")) {
+            sendMessage(GsonComponentSerializer.gson().deserialize(obj.get("json").getAsString()));
+        }
         if (type.equals("error_message")) {
             sendMessage(Component.text("サーバーからエラーが返されました: " + obj.get("message").getAsString(), NamedTextColor.RED));
+        }
+        if (type.equals("guild")) {
+            selectedGuild = obj.get("guildId").getAsLong();
         }
     }
 
@@ -75,7 +83,7 @@ public abstract class AbstractWebSocketChatClient extends WebSocketClient {
             return;
         }
         if (remote) {
-            sendMessage("ギルドチャットから切断されました。15秒後に再接続を試みます。");
+            sendMessage("ギルドチャットから切断されました。5秒後に再接続を試みます。");
             scheduleReconnect();
         }
     }
@@ -86,54 +94,90 @@ public abstract class AbstractWebSocketChatClient extends WebSocketClient {
         ex.printStackTrace();
     }
 
-    public void auth(String key) {
+    public long getSelectedGuild() {
+        return selectedGuild;
+    }
+
+    protected final @NotNull JsonObject createPacket(String type) {
         JsonObject obj = new JsonObject();
-        obj.addProperty("type", "auth");
+        obj.addProperty("type", type);
+        return obj;
+    }
+
+    public void auth(String key) {
+        JsonObject obj = createPacket("auth");
         obj.addProperty("key", key);
         send(gson.toJson(obj));
     }
 
     public void switchServer(String server) {
-        JsonObject obj = new JsonObject();
-        obj.addProperty("type", "switch_server");
+        JsonObject obj = createPacket("switch_server");
         obj.addProperty("server", server);
         send(gson.toJson(obj));
     }
 
     public void selectGuild(long id) {
-        JsonObject obj = new JsonObject();
-        obj.addProperty("type", "select");
+        JsonObject obj = createPacket("select");
         obj.addProperty("guildId", id);
         send(gson.toJson(obj));
     }
 
     public void sendMessageToGuild(@Nullable Long guildId, String message) {
-        JsonObject obj = new JsonObject();
-        obj.addProperty("type", "message");
+        JsonObject obj = createPacket("message");
         obj.add("guildId", guildId == null ? JsonNull.INSTANCE : new JsonPrimitive(guildId));
         obj.addProperty("message", message);
         send(gson.toJson(obj));
     }
 
     public void invite(String player) {
-        JsonObject obj = new JsonObject();
-        obj.addProperty("type", "invite");
+        JsonObject obj = createPacket("invite");
         obj.addProperty("player", player);
         send(gson.toJson(obj));
     }
 
     public void respondInvite(String guildName, boolean accept) {
-        JsonObject obj = new JsonObject();
-        obj.addProperty("type", "respond_invite");
+        JsonObject obj = createPacket("respond_invite");
         obj.addProperty("guildName", guildName);
         obj.addProperty("accept", accept);
         send(gson.toJson(obj));
     }
 
     public void nick(@Nullable String nickname) {
-        JsonObject obj = new JsonObject();
-        obj.addProperty("type", "nick");
+        JsonObject obj = createPacket("nick");
         obj.addProperty("nickname", nickname);
+        send(gson.toJson(obj));
+    }
+
+    public void toggleTranslate(boolean doTranslate) {
+        JsonObject obj = createPacket("toggle_translate");
+        obj.addProperty("doTranslate", doTranslate);
+        send(gson.toJson(obj));
+    }
+
+    public void role(@NotNull String member, @NotNull String role) {
+        JsonObject obj = createPacket("role");
+        obj.addProperty("member", member);
+        obj.addProperty("role", role);
+        send(gson.toJson(obj));
+    }
+
+    public void toggleInvites() {
+        send(gson.toJson(createPacket("toggle_invites")));
+    }
+
+    public void hideGuild() {
+        send(gson.toJson(createPacket("hide_guild")));
+    }
+
+    public void hideAll(@NotNull String duration) {
+        JsonObject obj = createPacket("hide_all");
+        obj.addProperty("duration", duration);
+        send(gson.toJson(obj));
+    }
+
+    public void format(@NotNull String format) {
+        JsonObject obj = createPacket("format");
+        obj.addProperty("format", format);
         send(gson.toJson(obj));
     }
 }

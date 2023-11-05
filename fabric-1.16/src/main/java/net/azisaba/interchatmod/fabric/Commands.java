@@ -2,11 +2,27 @@ package net.azisaba.interchatmod.fabric;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.azisaba.interchatmod.fabric.model.Guild;
+import net.azisaba.interchatmod.common.model.Guild;
+import net.azisaba.interchatmod.common.model.GuildMember;
+import net.azisaba.interchatmod.common.util.Constants;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.command.CommandSource;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.argument;
+import static net.fabricmc.fabric.api.client.command.v1.ClientCommandManager.literal;
 
 public class Commands {
     public static LiteralArgumentBuilder<FabricClientCommandSource> builderGS() {
@@ -79,7 +95,119 @@ public class Commands {
                                     return 0;
                                 })
                         )
-                );
+                )
+                .then(literal("jp-on")
+                        .executes(ctx -> {
+                            Mod.client.toggleTranslate(true);
+                            return 0;
+                        })
+                )
+                .then(literal("jp-off")
+                        .executes(ctx -> {
+                            Mod.client.toggleTranslate(false);
+                            return 0;
+                        })
+                )
+                .then(literal("role")
+                        .then(argument("member", StringArgumentType.word())
+                                .suggests((ctx, builder) -> {
+                                    Set<GuildMember> set = Mod.guildMembers.getOrDefault(Mod.client.getSelectedGuild(), Collections.emptySet());
+                                    return CommandSource.suggestMatching(set.stream().map(GuildMember::name), builder);
+                                })
+                                .then(argument("role", StringArgumentType.word())
+                                        .suggests((ctx, builder) -> CommandSource.suggestMatching(Stream.of("owner", "moderator", "member"), builder))
+                                        .executes(ctx -> {
+                                            Mod.client.role(StringArgumentType.getString(ctx, "member"), StringArgumentType.getString(ctx, "role"));
+                                            return 0;
+                                        })
+                                )
+                        )
+                )
+                .then(literal("toggleinvites")
+                        .executes(ctx -> {
+                            Mod.client.toggleInvites();
+                            return 0;
+                        })
+                )
+                .then(literal("hide-guild")
+                        .executes(ctx -> {
+                            Mod.client.hideGuild();
+                            return 0;
+                        })
+                )
+                .then(literal("hideall")
+                        .executes(ctx -> {
+                            Mod.client.hideAll("");
+                            return 0;
+                        })
+                        .then(argument("duration", StringArgumentType.greedyString())
+                                .executes(ctx -> {
+                                    Mod.client.hideAll(StringArgumentType.getString(ctx, "duration"));
+                                    return 0;
+                                })
+                        )
+                )
+                .then(literal("format")
+                        .then(argument("format", StringArgumentType.greedyString())
+                                .suggests((ctx, builder) -> CommandSource.suggestMatching(Constants.FORMAT_VARIABLES.stream(), builder))
+                                .executes(ctx -> {
+                                    Mod.client.format(StringArgumentType.getString(ctx, "format"));
+                                    return 0;
+                                })
+                        )
+                )
+                .then(literal("info").executes(ctx -> executeInfo(ctx.getSource())))
+                ;
+    }
+
+    private static int executeInfo(FabricClientCommandSource source) {
+        Guild guild = Mod.GUILDS.stream().filter(g -> g.id() == Mod.client.getSelectedGuild()).findAny().orElse(null);
+        if (guild == null) {
+            source.sendError(Text.of("無効なギルドが指定されています。/cgs (ギルド)で選択してください。"));
+            return 0;
+        }
+        Set<GuildMember> members = Mod.guildMembers.getOrDefault(guild.id(), Collections.emptySet());
+        source.sendFeedback(
+                new LiteralText("--- ギルド").formatted(Formatting.GOLD)
+                        .append(new LiteralText(guild.name()).formatted(Formatting.AQUA))
+                        .append(new LiteralText("の情報 ---").formatted(Formatting.GOLD))
+        );
+        source.sendFeedback(
+                new LiteralText("メンバー数: ").formatted(Formatting.GOLD)
+                        .append(new LiteralText(String.valueOf(members.size())).formatted(Formatting.RED))
+                        .append(new LiteralText("/").formatted(Formatting.GOLD))
+                        .append(new LiteralText(String.valueOf(guild.capacity())).formatted(Formatting.RED))
+        );
+        Consumer<String> sendRole = (role) -> {
+            String players =
+                    members.stream()
+                            .filter(m -> m.role().equals(role.toUpperCase(Locale.ROOT)))
+                            .map(GuildMember::name)
+                            .collect(Collectors.joining(", "));
+            source.sendFeedback(
+                    new LiteralText(role + ": ").formatted(Formatting.GOLD)
+                            .append(new LiteralText(players).formatted(Formatting.WHITE))
+            );
+        };
+        sendRole.accept("Owner");
+        sendRole.accept("Moderator");
+        sendRole.accept("Member");
+        source.sendFeedback(Text.of(""));
+        source.sendFeedback(
+                new LiteralText("公開: ").formatted(Formatting.GOLD)
+                        .append(new LiteralText(String.valueOf(guild.open())).formatted(guild.open() ? Formatting.GREEN : Formatting.RED))
+        );
+        source.sendFeedback(
+                new LiteralText("チャット形式: ").formatted(Formatting.GOLD)
+                        .append(new LiteralText(guild.format())
+                                .formatted(Formatting.WHITE)
+                                .styled(style ->
+                                        style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new LiteralText("クリックでコピー")))
+                                                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, guild.format()))
+                                )
+                        )
+        );
+        return members.size();
     }
 
     private static int executeFocus(FabricClientCommandSource source, String guildName) {

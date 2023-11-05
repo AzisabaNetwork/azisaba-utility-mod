@@ -2,12 +2,11 @@ package net.azisaba.interchatmod.blueberry;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import net.azisaba.interchatmod.blueberry.commands.GuildChatCommand;
 import net.azisaba.interchatmod.blueberry.commands.GuildCommand;
 import net.azisaba.interchatmod.blueberry.commands.GuildFocusCommand;
-import net.azisaba.interchatmod.blueberry.model.Guild;
+import net.azisaba.interchatmod.common.model.Guild;
+import net.azisaba.interchatmod.common.model.GuildMember;
 import net.blueberrymc.client.commands.ClientCommandManager;
 import net.blueberrymc.client.event.player.ClientLocalPlayerChatEvent;
 import net.blueberrymc.client.event.render.gui.ScreenChangedEvent;
@@ -20,6 +19,7 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.Component;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.SSLContext;
@@ -29,13 +29,13 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Mod extends BlueberryMod {
     public WebSocketChatClient client;
     public Set<Guild> guilds = Collections.synchronizedSet(new HashSet<>());
+    public Map<Long, Set<GuildMember>> guildMembers = new ConcurrentHashMap<>();
 
     @Override
     public void onLoad() {
@@ -109,42 +109,32 @@ public class Mod extends BlueberryMod {
     public void onPostInit() {
         reconnect();
 
-        Blueberry.getUtil().getClientScheduler().runTaskTimerAsynchronously(this, 1000 * 30, 1000 * 30, () -> {
+        Blueberry.getUtil().getClientScheduler().runTaskTimerAsynchronously(this, 1000 * 5, 1000 * 30, () -> {
             try {
-                String url = "https://api-ktor.azisaba.net/interchat/guilds/list";
-                if (ICConfig.apiHostOverride != null && !ICConfig.apiHostOverride.isBlank()) {
-                    url = ICConfig.apiHostOverride + "/interchat/guilds/list";
-                }
-                HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-                connection.addRequestProperty("Authorization", "Bearer " + ICConfig.apiKey);
-                String response = new String(connection.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-                JsonArray arr = new Gson().fromJson(response, JsonArray.class);
-                Set<Guild> localGuilds = getGuildsFromArray(arr);
+                Gson gson = new Gson();
+                JsonArray arr = gson.fromJson(makeRequest("interchat/guilds/list"), JsonArray.class);
+                Set<Guild> localGuilds = Guild.getGuildsFromArray(arr);
                 guilds.clear();
                 guilds.addAll(localGuilds);
+                for (Guild guild : localGuilds) {
+                    JsonArray membersArray = gson.fromJson(makeRequest("interchat/guilds/" + guild.id() + "/members"), JsonArray.class);
+                    guildMembers.put(guild.id(), GuildMember.getGuildMembersFromArray(membersArray));
+                }
             } catch (Exception e) {
                 getLogger().warn("Failed to fetch guild list", e);
             }
         });
     }
 
-    @NotNull
-    private static Set<Guild> getGuildsFromArray(JsonArray arr) {
-        Set<Guild> localGuilds = new HashSet<>();
-        for (JsonElement element : arr) {
-            JsonObject obj = element.getAsJsonObject();
-            localGuilds.add(
-                    new Guild(
-                            obj.get("id").getAsLong(),
-                            obj.get("name").getAsString(),
-                            obj.get("format").getAsString(),
-                            obj.get("capacity").getAsInt(),
-                            obj.get("open").getAsBoolean(),
-                            obj.get("deleted").getAsBoolean()
-                    )
-            );
+    @Contract("_ -> new")
+    private static @NotNull String makeRequest(String path) throws IOException {
+        String url = "https://api-ktor.azisaba.net/" + path;
+        if (ICConfig.apiHostOverride != null && !ICConfig.apiHostOverride.isBlank()) {
+            url = ICConfig.apiHostOverride + "/" + path;
         }
-        return localGuilds;
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.addRequestProperty("Authorization", "Bearer " + ICConfig.apiKey);
+        return new String(connection.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
     }
 
     @EventHandler

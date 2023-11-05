@@ -15,8 +15,8 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '0.3.0'
-group = 'net.azisaba.interchatmod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+//version = '0.3.0'
+//group = 'net.azisaba.interchatmod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'InterChatMod'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.

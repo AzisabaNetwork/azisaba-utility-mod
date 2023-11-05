@@ -3,7 +3,7 @@ package net.azisaba.interchatmod.blueberry.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.azisaba.interchatmod.blueberry.Mod;
-import net.azisaba.interchatmod.blueberry.model.Guild;
+import net.azisaba.interchatmod.common.model.Guild;
 import net.blueberrymc.client.commands.ClientCommandHandler;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;

@@ -1,6 +1,13 @@
-package net.azisaba.interchatmod.fabric.model;
+package net.azisaba.interchatmod.common.model;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public final class Guild {
     private final long id;
@@ -17,6 +24,25 @@ public final class Guild {
         this.capacity = capacity;
         this.open = open;
         this.deleted = deleted;
+    }
+
+    @NotNull
+    public static Set<Guild> getGuildsFromArray(JsonArray arr) {
+        Set<Guild> localGuilds = new HashSet<>();
+        for (JsonElement element : arr) {
+            JsonObject obj = element.getAsJsonObject();
+            localGuilds.add(
+                    new Guild(
+                            obj.get("id").getAsLong(),
+                            obj.get("name").getAsString(),
+                            obj.get("format").getAsString(),
+                            obj.get("capacity").getAsInt(),
+                            obj.get("open").getAsBoolean(),
+                            obj.get("deleted").getAsBoolean()
+                    )
+            );
+        }
+        return localGuilds;
     }
 
     public long id() {
@@ -71,4 +97,5 @@ public final class Guild {
                 "open=" + open + ", " +
                 "deleted=" + deleted + ']';
     }
+
 }

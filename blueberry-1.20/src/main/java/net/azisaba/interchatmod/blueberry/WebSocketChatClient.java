@@ -49,7 +49,17 @@ public class WebSocketChatClient extends AbstractWebSocketChatClient {
 
     @Override
     protected void scheduleReconnect() {
-        Blueberry.getUtil().getClientScheduler().runTaskLaterAsynchronously(mod, 1000 * 15, mod::reconnect);
+        Blueberry.getUtil().getClientScheduler().runTaskLaterAsynchronously(mod, 1000 * 5, mod::reconnect);
+        Blueberry.getUtil().getClientScheduler().runTaskLaterAsynchronously(mod, 1000 * 15, () -> {
+            if (!mod.client.isOpen()) {
+                mod.reconnect();
+            }
+        });
+        Blueberry.getUtil().getClientScheduler().runTaskLaterAsynchronously(mod, 1000 * 30, () -> {
+            if (!mod.client.isOpen()) {
+                mod.reconnect();
+            }
+        });
     }
 
     @Override
