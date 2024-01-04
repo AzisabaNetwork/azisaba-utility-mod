@@ -6,5 +6,4 @@ dependencies {
     api("net.kyori:adventure-api:$adventureVersion")
     api("net.kyori:adventure-text-serializer-legacy:$adventureVersion")
     api("net.kyori:adventure-text-serializer-gson:$adventureVersion")
-    api("org.java-websocket:Java-WebSocket:1.5.4")
 }

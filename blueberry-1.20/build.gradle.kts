@@ -26,8 +26,7 @@ dependencies {
 
 tasks {
     shadowJar {
-        relocate("net.kyori", "net.azisaba.interchatmod.lib.net.kyori")
-        relocate("org.java_websocket", "net.azisaba.interchatmod.lib.org.java_websocket")
+        relocate("net.kyori", "net.azisaba.azisabautilitymod.lib.net.kyori")
     }
 
     getByName("build") {

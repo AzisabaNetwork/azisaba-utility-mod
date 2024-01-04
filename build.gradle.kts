@@ -11,7 +11,7 @@ allprojects {
         plugin("com.github.johnrengelman.shadow")
     }
 
-    group = "net.azisaba.interchatmod"
+    group = "net.azisaba.azisabautilitymod"
     version = "0.4.0"
 
     repositories {
@@ -32,7 +32,7 @@ allprojects {
 subprojects {
     tasks {
         shadowJar {
-            archiveBaseName.set("InterChatMod-${project.name}")
+            archiveBaseName.set("AzisabaUtilityMod-${project.name}")
         }
     }
 }

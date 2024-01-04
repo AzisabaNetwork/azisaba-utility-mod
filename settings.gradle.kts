@@ -1,4 +1,4 @@
-rootProject.name = "InterChatMod"
+rootProject.name = "AzisabaUtilityMod"
 
 pluginManagement {
     repositories {

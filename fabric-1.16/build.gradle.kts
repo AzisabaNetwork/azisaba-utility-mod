@@ -8,7 +8,7 @@ val minecraftVersion = "1.16.5"
 val yarnMappings = "1.16.5+build.10"
 val loaderVersion = "0.14.24"
 val fabricVersion = "0.42.0+1.16"
-val archivesBaseName = "InterChatMod-${project.name}"
+val archivesBaseName = "AzisabaUtilityMod-${project.name}"
 val adventureVersion by project.properties
 
 repositories {
@@ -44,7 +44,6 @@ dependencies {
     include("net.kyori:adventure-text-serializer-legacy:$adventureVersion")
     include("net.kyori:adventure-text-serializer-json:$adventureVersion")
     include("net.kyori:adventure-text-serializer-gson:$adventureVersion")
-    include("org.java-websocket:Java-WebSocket:1.5.4")
     include("org.slf4j:slf4j-api:2.0.6")
     include("org.slf4j:slf4j-nop:2.0.6")
 }

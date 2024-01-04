@@ -1,4 +1,4 @@
-id: interchatmod
-name: InterChatMod
+id: azisabautilitymod
+name: AzisabaUtilityMod
 version: 0.0.1
-main: net.azisaba.interchatmod.blueberry.Mod
+main: net.azisaba.azisabautilitymod.blueberry.Mod

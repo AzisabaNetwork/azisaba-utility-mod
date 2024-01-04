@@ -16,8 +16,8 @@ apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 
 //version = '0.3.0'
-//group = 'net.azisaba.interchatmod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'InterChatMod'
+//group = 'net.azisaba.azisabautilitymod' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = 'AzisabaUtilityMod'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 //Print out JVM information so that we know what version is running. Extreamly useful for people to know when helping you.
@@ -132,15 +132,14 @@ dependencies {
     shade "net.kyori:adventure-text-serializer-legacy:$adventureVersion"
     shade "net.kyori:adventure-text-serializer-json:$adventureVersion"
     shade "net.kyori:adventure-text-serializer-gson:$adventureVersion"
-    shade "org.java-websocket:Java-WebSocket:1.5.4"
     shade "org.slf4j:slf4j-api:2.0.6"
     shade "org.slf4j:slf4j-nop:2.0.6"
 
 }
 
 mixin {
-    add(sourceSets.main, 'mixins.interchatmod.refmap.json')
-    config 'mixins.interchatmod.json'
+    add(sourceSets.main, 'mixins.azisabautilitymod.refmap.json')
+    config 'mixins.azisabautilitymod.json'
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -148,7 +147,7 @@ jar {
     archiveClassifier = 'slim'
     manifest {
         attributes([
-            "Specification-Title": "interChatMod",
+            "Specification-Title": "AzisabaUtilityMod",
             "Specification-Vendor": "AzisabaNetwork",
             "Specification-Version": "1", // We are version 1 of ourselves
             "Implementation-Title": project.name,
