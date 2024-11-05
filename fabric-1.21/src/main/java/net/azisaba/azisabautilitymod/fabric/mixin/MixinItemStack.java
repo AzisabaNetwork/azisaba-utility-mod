@@ -50,7 +50,9 @@ public abstract class MixinItemStack {
         }
         if (getComponents().contains(DataComponentTypes.REPAIR_COST)) {
             int repairCost = Objects.requireNonNull(getComponents().get(DataComponentTypes.REPAIR_COST));
-            list.add(Text.literal("RepairCost: " + repairCost).formatted(Formatting.DARK_GRAY));
+            if (repairCost > 0) {
+                list.add(Text.literal("RepairCost: " + repairCost).formatted(Formatting.DARK_GRAY));
+            }
         }
         cir.setReturnValue(list);
     }
