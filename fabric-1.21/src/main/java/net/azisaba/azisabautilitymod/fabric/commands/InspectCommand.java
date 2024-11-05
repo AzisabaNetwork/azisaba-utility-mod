@@ -23,7 +23,7 @@ public class InspectCommand implements Command {
         component.getWithStyle(component.getStyle()
                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to copy")))
                 .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, tag.toString())));
-        player.sendMessage(component);
+        player.sendMessage(component, false);
     }
 
     @Override

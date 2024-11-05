@@ -14,7 +14,8 @@ public class HelpCommand implements Command {
                     Text.literal("")
                             .append(Text.literal(("/cgrenade " + command.getName() + " " + command.getUsage()).trim()).formatted(Formatting.AQUA))
                             .append(Text.literal(" - ").formatted(Formatting.GRAY))
-                            .append(Text.literal(command.getDescription()).formatted(Formatting.LIGHT_PURPLE))
+                            .append(Text.literal(command.getDescription()).formatted(Formatting.LIGHT_PURPLE)),
+                    false
             );
         }
     }

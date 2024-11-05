@@ -24,7 +24,6 @@ public class GenerateKotlinLoveHeadCommand implements Command {
     @Override
     public void execute(@NotNull ClientPlayerEntity player, @NotNull String[] args) throws CommandSyntaxException {
         if (args.length == 0) {
-            player.sendMessage(Text.literal("Usage: " + getFullUsage()));
             return;
         }
         String name = args[0];
