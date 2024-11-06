@@ -9,7 +9,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,6 +32,11 @@ public abstract class MixinItemStack {
         NbtCompound tag = getComponents().getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         if (tag.contains("MYTHIC_TYPE", 8)) {
             String mmId = tag.getString("MYTHIC_TYPE");
+            list.add(Text.literal("MMID: " + mmId).formatted(Formatting.DARK_GRAY));
+        }
+        var publicBukkitValues = tag.getCompound("PublicBukkitValues");
+        if (publicBukkitValues.contains("mythicmobs:type", 8)) {
+            String mmId = publicBukkitValues.getString("mythicmobs:type");
             list.add(Text.literal("MMID: " + mmId).formatted(Formatting.DARK_GRAY));
         }
         if (getComponents().contains(DataComponentTypes.CUSTOM_MODEL_DATA)) {
