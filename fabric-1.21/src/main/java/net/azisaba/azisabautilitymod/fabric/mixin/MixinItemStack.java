@@ -4,18 +4,14 @@ import net.azisaba.azisabautilitymod.fabric.connection.UpdateTimePacketHandler;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +22,11 @@ import java.util.UUID;
 public abstract class MixinItemStack {
     @Shadow public abstract ComponentMap getComponents();
 
-    @Inject(at = @At("RETURN"), method = "getTooltip", cancellable = true)
-    public void getTooltip(Item.TooltipContext context, PlayerEntity player, TooltipType type, CallbackInfoReturnable<List<Text>> cir) {
-        List<Text> list = new ArrayList<>(cir.getReturnValue()); // returned list may be unmodifiable
+    @ModifyVariable(method = "getTooltip", at = @At("RETURN"), ordinal = 0)
+    public List<Text> addTooltip(List<Text> list) {
+        if (!(list instanceof ArrayList<Text>)) {
+            list = new ArrayList<>(list);
+        }
         NbtCompound tag = getComponents().getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
         if (tag.contains("MYTHIC_TYPE", 8)) {
             String mmId = tag.getString("MYTHIC_TYPE");
@@ -58,6 +56,6 @@ public abstract class MixinItemStack {
                 list.add(Text.literal("RepairCost: " + repairCost).formatted(Formatting.DARK_GRAY));
             }
         }
-        cir.setReturnValue(list);
+        return list;
     }
 }
