@@ -13,8 +13,7 @@ public class CommandManager {
             new InspectCommand(),
             new MergeCustomDataCommand(),
             new SetCustomDataCommand(),
-            new RemoveCustomDataTagElementCommand(),
-            new GenerateKotlinLoveHeadCommand()
+            new RemoveCustomDataTagElementCommand()
     );
 
     public static @Nullable Command getCommand(String name) {
