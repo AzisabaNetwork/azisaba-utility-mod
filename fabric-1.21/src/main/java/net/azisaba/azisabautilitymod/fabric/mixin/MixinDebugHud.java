@@ -30,7 +30,7 @@ public class MixinDebugHud {
 
     @ModifyArg(index = 1, at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/client/gui/hud/DebugHud;drawText(Lnet/minecraft/client/gui/DrawContext;Ljava/util/List;Z)V"), method = "render")
     protected List<String> drawText(List<String> text) {
-        assert client.player != null;
+        if (client.player == null) return text;
         ClientConnection clientConnection = ((MixinClientCommonNetworkHandlerAccessor) client.player.networkHandler).getConnection();
         Channel channel = ((MixinClientConnectionAccessor) clientConnection).getChannel();
         UpdateTimePacketHandler updateTimePacketHandler = channel.pipeline().get(UpdateTimePacketHandler.class);
