@@ -46,16 +46,16 @@ public class Commands {
             String[] args = input.isEmpty() ? new String[0] : input.split(" ");
             Command command = CommandManager.getCommand(commandName);
             if (command == null) {
-                player.sendMessage(Text.literal("Unknown command: " + commandName));
+                player.sendMessage(Text.literal("Unknown command: " + commandName), false);
                 return 0;
             }
             command.execute(player, args);
         } catch (Exception e) {
             MutableText text = Text.literal("An internal error occurred while executing command: " + e.getMessage()).formatted(Formatting.RED);
             Style style = text.getStyle();
-            style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, AUtil.stacktraceComponent(e)));
+            style = style.withHoverEvent(new HoverEvent.ShowText(AUtil.stacktraceComponent(e)));
             text.setStyle(style);
-            player.sendMessage(text);
+            player.sendMessage(text, false);
             e.printStackTrace();
         }
         return 0;
@@ -73,9 +73,9 @@ public class Commands {
         } catch (Exception e) {
             MutableText text = Text.literal("An internal error occurred while suggesting command arguments: " + e.getMessage()).formatted(Formatting.RED);
             Style style = text.getStyle();
-            style = style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, AUtil.stacktraceComponent(e)));
+            style = style.withHoverEvent(new HoverEvent.ShowText(AUtil.stacktraceComponent(e)));
             text.setStyle(style);
-            player.sendMessage(text);
+            player.sendMessage(text, false);
             e.printStackTrace();
         }
         return Stream.empty();

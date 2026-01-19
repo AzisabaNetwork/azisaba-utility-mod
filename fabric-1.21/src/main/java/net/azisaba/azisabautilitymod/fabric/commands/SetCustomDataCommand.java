@@ -15,9 +15,9 @@ import java.util.List;
 public class SetCustomDataCommand implements Command {
     @Override
     public void execute(@NotNull ClientPlayerEntity player, @NotNull String[] args) throws CommandSyntaxException {
-        ItemStack item = player.getInventory().getMainHandStack().copy();
-        item.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(StringNbtReader.parse(String.join(" ", args))));
-        player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot + 36, item));
+        ItemStack item = player.getInventory().getSelectedStack().copy();
+        item.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(StringNbtReader.readCompound(String.join(" ", args))));
+        player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().getSelectedSlot() + 36, item));
     }
 
     @Override

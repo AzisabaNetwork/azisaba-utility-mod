@@ -31,8 +31,8 @@ public class UpdateTimePacketHandler extends ChannelInboundHandlerAdapter {
             if (packet.getActions().contains(PlayerListS2CPacket.Action.ADD_PLAYER)) {
                 for (PlayerListS2CPacket.Entry entry : packet.getEntries()) {
                     if (entry.profile() == null) continue;
-                    if (entry.profile().getName() != null) {
-                        uuidToNameMap.put(entry.profileId(), entry.profile().getName());
+                    if (entry.profile().name() != null) {
+                        uuidToNameMap.put(entry.profileId(), entry.profile().name());
                     }
                     if (admin.containsKey(entry.profileId())) continue;
                     new Thread(() -> {

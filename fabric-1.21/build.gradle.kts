@@ -1,13 +1,13 @@
 plugins {
-    id("fabric-loom") version "1.8-SNAPSHOT"
+    id("fabric-loom") version "1.14-SNAPSHOT"
 }
 
 java.toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 
-val minecraftVersion = "1.21.1"
-val yarnMappings = "1.21.1+build.3"
-val loaderVersion = "0.16.7"
-val fabricVersion = "0.105.0+1.21.1"
+val minecraftVersion = "1.21.11"
+val yarnMappings = "1.21.11+build.3"
+val loaderVersion = "0.18.4"
+val fabricVersion = "0.140.2+1.21.11"
 val archivesBaseName = "AzisabaUtilityMod-${project.name}"
 val adventureVersion by project.properties
 
@@ -17,7 +17,8 @@ repositories {
     // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
     // See https://docs.gradle.org/current/userguide/declaring_repositories.html
     // for more information about repositories.
-    maven { url = uri("https://maven.wispforest.io") }
+    maven { url = uri("https://maven.shedaniel.me/") }
+    maven { url = uri("https://maven.terraformersmc.com/releases/") }
 }
 
 dependencies {
@@ -29,8 +30,10 @@ dependencies {
     // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fabricVersion")
 
-    modImplementation("io.wispforest:owo-lib:0.12.15+1.21")
-    annotationProcessor("io.wispforest:owo-lib:0.12.15+1.21")
+    modApi("me.shedaniel.cloth:cloth-config-fabric:19.0.147") {
+        exclude("net.fabricmc.fabric-api")
+    }
+    modApi("com.terraformersmc:modmenu:15.0.0")
 
     // Uncomment the following line to enable the deprecated Fabric API modules.
     // These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.

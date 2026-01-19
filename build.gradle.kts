@@ -12,7 +12,7 @@ allprojects {
     }
 
     group = "net.azisaba.azisabautilitymod"
-    version = "0.4.1"
+    version = "1.0.0"
 
     repositories {
         // mavenLocal()

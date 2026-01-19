@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinPlayerListHud {
     @Inject(at = @At("RETURN"), method = "getPlayerName")
     public void rewriteComponent(PlayerListEntry entry, CallbackInfoReturnable<Text> cir) {
-        String s = UpdateTimePacketHandler.admin.get(entry.getProfile().getId());
+        String s = UpdateTimePacketHandler.admin.get(entry.getProfile().id());
         if (s == null || s.isBlank()) return;
         var component = cir.getReturnValue();
         if (!(component instanceof MutableText text)) return;

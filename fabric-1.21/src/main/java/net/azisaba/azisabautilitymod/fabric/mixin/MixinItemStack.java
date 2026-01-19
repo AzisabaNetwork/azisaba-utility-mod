@@ -4,14 +4,20 @@ import net.azisaba.azisabautilitymod.fabric.connection.UpdateTimePacketHandler;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,27 +28,36 @@ import java.util.UUID;
 public abstract class MixinItemStack {
     @Shadow public abstract ComponentMap getComponents();
 
-    @ModifyVariable(method = "getTooltip", at = @At("RETURN"), ordinal = 0)
-    public List<Text> addTooltip(List<Text> list) {
+    @Inject(method = "getTooltip", at = @At("RETURN"), cancellable = true)
+    public void addTooltip(Item.TooltipContext context, @Nullable PlayerEntity player, TooltipType type, CallbackInfoReturnable<List<Text>> cir) {
+        List<Text> list = cir.getReturnValue();
         if (!(list instanceof ArrayList<Text>)) {
             list = new ArrayList<>(list);
         }
         NbtCompound tag = getComponents().getOrDefault(DataComponentTypes.CUSTOM_DATA, NbtComponent.DEFAULT).copyNbt();
-        if (tag.contains("MYTHIC_TYPE", 8)) {
-            String mmId = tag.getString("MYTHIC_TYPE");
-            list.add(Text.literal("MMID: " + mmId).formatted(Formatting.DARK_GRAY));
+        if (tag.get("MYTHIC_TYPE") instanceof NbtString(String value)) {
+            list.add(Text.literal("MMID: " + value).formatted(Formatting.DARK_GRAY));
         }
-        var publicBukkitValues = tag.getCompound("PublicBukkitValues");
-        if (publicBukkitValues.contains("mythicmobs:type", 8)) {
-            String mmId = publicBukkitValues.getString("mythicmobs:type");
-            list.add(Text.literal("MMID: " + mmId).formatted(Formatting.DARK_GRAY));
+        var publicBukkitValues = tag.getCompound("PublicBukkitValues").orElseGet(NbtCompound::new);
+        if (publicBukkitValues.get("mythicmobs:type") instanceof NbtString(String value)) {
+            list.add(Text.literal("MMID: " + value).formatted(Formatting.DARK_GRAY));
         }
         if (getComponents().contains(DataComponentTypes.CUSTOM_MODEL_DATA)) {
-            int cmd = Objects.requireNonNull(getComponents().get(DataComponentTypes.CUSTOM_MODEL_DATA)).value();
-            list.add(Text.literal("CustomModelData: " + cmd).formatted(Formatting.DARK_GRAY));
+            var cmd = Objects.requireNonNull(getComponents().get(DataComponentTypes.CUSTOM_MODEL_DATA));
+            if (!cmd.floats().isEmpty()) {
+                list.add(Text.literal("CustomModelData (floats): " + cmd.floats()).formatted(Formatting.DARK_GRAY));
+            }
+            if (!cmd.flags().isEmpty()) {
+                list.add(Text.literal("CustomModelData (flags): " + cmd.flags()).formatted(Formatting.DARK_GRAY));
+            }
+            if (!cmd.colors().isEmpty()) {
+                list.add(Text.literal("CustomModelData (colors): " + cmd.colors()).formatted(Formatting.DARK_GRAY));
+            }
+            if (!cmd.strings().isEmpty()) {
+                list.add(Text.literal("CustomModelData (strings): " + cmd.strings()).formatted(Formatting.DARK_GRAY));
+            }
         }
-        if (tag.contains("soulbound", 8)) {
-            String uuid = tag.getString("soulbound");
+        if (tag.get("soulbound") instanceof NbtString(String uuid)) {
             try {
                 String name = UpdateTimePacketHandler.uuidToNameMap.get(UUID.fromString(uuid));
                 list.add(Text.literal("Soulbound: " + uuid + " (" + name + ")").formatted(Formatting.DARK_GRAY));
@@ -56,6 +71,6 @@ public abstract class MixinItemStack {
                 list.add(Text.literal("RepairCost: " + repairCost).formatted(Formatting.DARK_GRAY));
             }
         }
-        return list;
+        cir.setReturnValue(list);
     }
 }

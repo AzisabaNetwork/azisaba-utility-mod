@@ -16,14 +16,14 @@ import java.util.Objects;
 public class InspectCommand implements Command {
     @Override
     public void execute(@NotNull ClientPlayerEntity player, @NotNull String[] args) {
-        ItemStack stack = player.getInventory().getMainHandStack();
+        ItemStack stack = player.getInventory().getSelectedStack();
         NbtCompound tag = Objects.requireNonNull(stack.get(DataComponentTypes.CUSTOM_DATA)).copyNbt();
         MutableText component = Text.literal("");
         component.append(NbtHelper.toPrettyPrintedText(tag));
         component.getWithStyle(component.getStyle()
-                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal("Click to copy")))
-                .withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, tag.toString())));
-        player.sendMessage(component);
+                .withHoverEvent(new HoverEvent.ShowText(Text.literal("Click to copy")))
+                .withClickEvent(new ClickEvent.CopyToClipboard(tag.toString())));
+        player.sendMessage(component, false);
     }
 
     @Override

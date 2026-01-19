@@ -12,11 +12,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,9 +28,8 @@ public class MixinDebugHud {
     private String azisaba$tps = "";
     @Shadow @Final private MinecraftClient client;
 
-    @Inject(at = @At("RETURN"), method = "getLeftText", cancellable = true)
-    protected void getLeftText(CallbackInfoReturnable<List<String>> cir) {
-        List<String> list = new ArrayList<>(cir.getReturnValue());
+    @ModifyArg(index = 1, at = @At(value = "INVOKE", ordinal = 0, target = "Lnet/minecraft/client/gui/hud/DebugHud;drawText(Lnet/minecraft/client/gui/DrawContext;Ljava/util/List;Z)V"), method = "render")
+    protected List<String> drawText(List<String> text) {
         assert client.player != null;
         ClientConnection clientConnection = ((MixinClientCommonNetworkHandlerAccessor) client.player.networkHandler).getConnection();
         Channel channel = ((MixinClientConnectionAccessor) clientConnection).getChannel();
@@ -62,13 +59,13 @@ public class MixinDebugHud {
                     azisaba$formatDouble(tps180s)
             );
         }
-        list.add(azisaba$tps);
+        text.add(azisaba$tps);
         PlayerListEntry playerInfo = client.player.networkHandler.getPlayerListEntry(client.player.getUuid());
         if (playerInfo != null) {
             int latency = playerInfo.getLatency();
-            list.add("§dPing§f: " + azisaba$pingColor(latency) + latency + " §fms");
+            text.add("§dPing§f: " + azisaba$pingColor(latency) + latency + " §fms");
         }
-        cir.setReturnValue(list);
+        return text;
     }
 
     @Unique

@@ -17,11 +17,11 @@ import java.util.Objects;
 public class MergeCustomDataCommand implements Command {
     @Override
     public void execute(@NotNull ClientPlayerEntity player, @NotNull String[] args) throws CommandSyntaxException {
-        ItemStack item = player.getInventory().getMainHandStack().copy();
+        ItemStack item = player.getInventory().getSelectedStack().copy();
         NbtCompound tag = Objects.requireNonNull(item.get(DataComponentTypes.CUSTOM_DATA)).copyNbt();
-        tag.copyFrom(StringNbtReader.parse(String.join(" ", args)));
+        tag.copyFrom(StringNbtReader.readCompound(String.join(" ", args)));
         item.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
-        player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot + 36, item));
+        player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().getSelectedSlot() + 36, item));
     }
 
     @Override

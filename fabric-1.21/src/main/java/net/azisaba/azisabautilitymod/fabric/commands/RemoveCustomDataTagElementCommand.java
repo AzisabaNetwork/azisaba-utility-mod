@@ -16,7 +16,7 @@ import java.util.Objects;
 public class RemoveCustomDataTagElementCommand implements Command {
     @Override
     public void execute(@NotNull ClientPlayerEntity player, @NotNull String[] args) throws CommandSyntaxException {
-        ItemStack item = player.getInventory().getMainHandStack().copy();
+        ItemStack item = player.getInventory().getSelectedStack().copy();
         NbtCompound tag = Objects.requireNonNull(item.get(DataComponentTypes.CUSTOM_DATA)).copyNbt();
         for (String key : args) {
             NbtCompound current = tag;
@@ -26,10 +26,11 @@ public class RemoveCustomDataTagElementCommand implements Command {
                 if (i == arr.length - 1) {
                     current.remove(s);
                 } else {
-                    if (!current.contains(s, 10)) {
+                    if (!(current.get(s) instanceof NbtCompound)) {
                         break;
                     }
-                    current = current.getCompound(s);
+                    current = current.getCompound(s).orElse(null);
+                    if (current == null) break;
                 }
             }
         }
@@ -38,7 +39,7 @@ public class RemoveCustomDataTagElementCommand implements Command {
         } else {
             item.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(tag));
         }
-        player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().selectedSlot + 36, item));
+        player.networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(player.getInventory().getSelectedSlot() + 36, item));
     }
 
     @Override

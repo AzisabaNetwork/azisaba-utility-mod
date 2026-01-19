@@ -16,7 +16,10 @@
 	"environment": "client",
 	"entrypoints": {
 		"main": [
-          "net.azisaba.azisabautilitymod.fabric.Mod"
+            "net.azisaba.azisabautilitymod.fabric.Mod"
+		],
+		"modmenu": [
+			"net.azisaba.azisabautilitymod.fabric.ModMenuIntegration"
 		]
 	},
 	"mixins": [
@@ -24,9 +27,9 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.16.2",
-		"minecraft": "~1.21.1",
+		"minecraft": "~1.21.11",
 		"java": ">=21",
 		"fabric-api": "*",
-		"owo": "*"
+		"cloth-config": "*"
 	}
 }

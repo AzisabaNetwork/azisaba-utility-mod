@@ -12,9 +12,10 @@ public class HelpCommand implements Command {
         for (Command command : CommandManager.COMMANDS) {
             player.sendMessage(
                     Text.literal("")
-                            .append(Text.literal(("/cgrenade " + command.getName() + " " + command.getUsage()).trim()).formatted(Formatting.AQUA))
+                            .append(Text.literal(("/aziutil " + command.getName() + " " + command.getUsage()).trim()).formatted(Formatting.AQUA))
                             .append(Text.literal(" - ").formatted(Formatting.GRAY))
-                            .append(Text.literal(command.getDescription()).formatted(Formatting.LIGHT_PURPLE))
+                            .append(Text.literal(command.getDescription()).formatted(Formatting.LIGHT_PURPLE)),
+                    false
             );
         }
     }

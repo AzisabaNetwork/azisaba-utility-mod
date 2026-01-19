@@ -15,11 +15,13 @@ import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 
 public class Mod implements ModInitializer {
+    private static final Gson GSON = new Gson();
     public static final Logger LOGGER = LoggerFactory.getLogger("AzisabaUtilityMod");
-    public static final net.azisaba.azisabautilitymod.fabric.ModConfig CONFIG = net.azisaba.azisabautilitymod.fabric.ModConfig.createAndLoad();
+    public static final ModConfig CONFIG = new ModConfig();
 
     @Override
     public void onInitialize() {
+        CONFIG.load();
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(Commands.builder());
         });
@@ -28,17 +30,17 @@ public class Mod implements ModInitializer {
     public static String makeRequest(String path) throws IOException {
         String url = "https://api-ktor.azisaba.net/" + path;
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.addRequestProperty("Authorization", "Bearer " + CONFIG.apiKey());
+        connection.addRequestProperty("Authorization", "Bearer " + CONFIG.apiKey);
         return new String(connection.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
     }
 
     public static <T> T requestGson(@NotNull String url, @NotNull Class<T> clazz) {
         try {
             URLConnection connection = new URI(url).toURL().openConnection();
-            connection.setRequestProperty("Authorization", "Bearer " + CONFIG.apiKey());
+            connection.setRequestProperty("Authorization", "Bearer " + CONFIG.apiKey);
             connection.connect();
             String s = new String(connection.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            return new Gson().fromJson(s, clazz);
+            return GSON.fromJson(s, clazz);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
